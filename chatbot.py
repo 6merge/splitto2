@@ -60,6 +60,7 @@ def append_context(role, content):
 
 # Generate AI response
 # Generate AI response
+# Generate AI response
 def generate_response(current_style, context_log, user_input):
     genai = configure_genai()
     if not genai:
@@ -76,8 +77,8 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # **Change model path here** to something standard
-        model_name = "models/gemini-1.5"  # Updated model path, check if this is available
+        # Correct model path format
+        model_name = "projects/658259484703/locations/us-central1/models/gemini-1.5"  # Adjust the model path and region
         response = genai.generate_text(
             model=model_name,  # Use updated model format
             prompt=dynamic_prompt,
