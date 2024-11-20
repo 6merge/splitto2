@@ -8,7 +8,7 @@ import google.generativeai as genai
 load_dotenv()
 
 # Fetch API key
-api_key = os.getenv("GOOGLE_API_KEY")  # Updated to use GOOGLE_API_KEY instead of GENAI_API_KEY
+api_key = os.getenv("GOOGLE_API_KEY")
 
 # Ensure API key is available
 if not api_key:
@@ -73,8 +73,8 @@ def generate_response(current_style, context_log, user_input):
             dynamic_prompt += f"{message['role']}: {message['content']}\n"
         dynamic_prompt += f"User: {user_input}\nAssistant:"
 
-        # Use Gemini Pro model
-        model = genai.GenerativeModel('gemini-pro')
+        # Use Gemini Flash model
+        model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(dynamic_prompt, 
                                           generation_config=genai.types.GenerationConfig(
                                               temperature=0.7,
@@ -163,3 +163,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
