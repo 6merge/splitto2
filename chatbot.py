@@ -78,7 +78,7 @@ def generate_response(current_style, context_log, user_input):
 
     try:
         # Ensure correct model path if required by the API
-        model="projects/658259484703/locations/asia-south1/models/gemini-1.5-flash", # Replace placeholders if needed
+        model_path="projects/658259484703/locations/asia-south1/models/gemini-1.5-flash", # Replace placeholders if needed
 
         # API Call
         response = genai.generate_text(
