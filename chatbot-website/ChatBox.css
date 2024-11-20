@@ -1,0 +1,32 @@
+/* chatbot.css */
+
+.chat-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .message-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 400px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+  }
+  
+  .input-area {
+    width: 80%;
+    padding: 10px;
+  }
+  
+  .send-button {
+    padding: 10px;
+    margin-left: 5px;
+  }
+  
+  .theme-selector {
+    margin-left: 10px;
+  }
+  
+  /* Add more styles as needed */
+  

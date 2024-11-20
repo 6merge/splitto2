@@ -1,0 +1,137 @@
+/* chatbot.css */
+
+/* Base Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+/* Chatbox Container */
+.chat-container {
+  padding: 20px;
+  max-width: 600px;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Message Box */
+.message-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+/* Messages */
+.message {
+  margin: 10px 0;
+}
+
+.message.user {
+  text-align: right;
+}
+
+.message.assistant {
+  text-align: left;
+}
+
+.message div {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 70%;
+}
+
+.message.user div {
+  background: #007bff;
+  color: white;
+}
+
+.message.assistant div {
+  background: #e1e1e1;
+  color: black;
+}
+
+/* Input and Button */
+input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+}
+
+button {
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Theme Selector */
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Theme Switcher Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Theme Specific Styles */
+.casual {
+  background: #ffecb3;
+}
+
+.formal {
+  background: #cfd8dc;
+}
+
+.friendly {
+  background: #f1f8e9;
+}
+
+.witty {
+  background: #fce4ec;
+}
+
+.direct {
+  background: #ffcccb;
+}
