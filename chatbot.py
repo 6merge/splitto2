@@ -47,6 +47,10 @@ def append_context(role, content):
 
 # Generate AI response
 def generate_response(current_style, context_log, user_input):
+    genai = configure_genai()
+    if not genai:
+        return "(Generative AI module is not available)"
+
     dynamic_prompt = (
         f"System: {current_style}\n"
         "The following is a conversation between a user and Splitto, "
@@ -58,10 +62,20 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(dynamic_prompt)
-        if response and hasattr(response, "text"):
-            return response.text.strip()
+        # Pass the model name as a string
+        model_name = "projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash"
+
+        # Generate the response
+        response = genai.generate_text(
+            model=model_name,  # Pass model name directly as a string
+            prompt=dynamic_prompt,
+            temperature=0.7,
+            max_output_tokens=100,
+        )
+
+        # Process response
+        if response and response.generations:
+            return response.generations[0].text.strip()
         return "(No response received)"
     except Exception as e:
         return f"Error: {e}"
