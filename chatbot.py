@@ -60,6 +60,7 @@ def append_context(role, content):
     save_memory(memory)
 
 # Generate AI response
+# Generate AI response
 def generate_response(current_style, context_log, user_input):
     genai = configure_genai()
     if not genai:
@@ -76,19 +77,24 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
+        # Ensure correct model path if required by the API
+        model="projects/658259484703/locations/asia-south1/models/gemini-1.5-flash", # Replace placeholders if needed
+
+        # API Call
         response = genai.generate_text(
-         model=  "tunedModels/gemini-1.5-flash",
-
-
+            model=model_path,
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
         )
+
+        # Handle response
         if response and response.generations:
             return response.generations[0].text.strip()
         return "(No response received)"
     except Exception as e:
         return f"Error: {e}"
+
 
 # Load memory
 memory = load_memory()
