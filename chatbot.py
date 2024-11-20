@@ -78,12 +78,12 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # Specify the model as a TunedModel
-        model = genai.TunedModel(name="projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash")
+        # Use the model name as a string
+        model_name = "projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash"
 
         # API Call
         response = genai.generate_text(
-            model=model,
+            model=model_name,  # Pass model name directly as a string
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
@@ -95,6 +95,7 @@ def generate_response(current_style, context_log, user_input):
         return "(No response received)"
     except Exception as e:
         return f"Error: {e}"
+
 
 
 # Load memory
