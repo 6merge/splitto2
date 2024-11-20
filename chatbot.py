@@ -75,12 +75,12 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # Pass the model name as a string
-        model_name = "projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash"
+        # Corrected model name with `tunedModels/` prefix
+        model_name = "tunedModels/gemini-1.5-flash"  # Corrected model path
 
         # Generate the response
         response = genai.generate_text(
-            model=model_name,  # Pass model name directly as a string
+            model=model_name,  # Pass model name correctly
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
