@@ -1,15 +1,28 @@
 import os
 import json
-import google.generativeai as genai
 from dotenv import load_dotenv
 import streamlit as st
 
 # Load environment variables
 load_dotenv()
 
-# Configure Generative AI
-genai.configure(api_key=os.getenv("GENAI_API_KEY"))
-model_name = "gemini-1.5-flash"
+# Fetch API key
+api_key = os.getenv("GENAI_API_KEY")
+
+# Ensure API key is available
+if not api_key:
+    st.error("Generative AI API key is missing. Please set the GENAI_API_KEY environment variable.")
+    st.stop()
+
+# Lazy import and configure Generative AI
+def configure_genai():
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=api_key)
+        return genai
+    except ImportError as e:
+        st.error(f"Error importing Generative AI library: {e}")
+        return None
 
 # Memory file path
 memory_file = "chat_memory.json"
@@ -20,7 +33,7 @@ styles = {
     "Khadoos": "Keep responses clear and professional, almost rude but never crossing the line. Language should be Hindi in Roman script, no English translation.",
     "Dost": "Keep responses warm and supportive. Language should be Hindi in Roman script, no English translation.",
     "Yaar": "Include subtle humor where appropriate. Language should be Hindi in Roman script, no English translation.",
-    "Nonchalant legend": "Keep responses brief and to the point, make it like the chatbot dont care about the user at all and give one word or one sentence responses. Language should be Hindi in Roman script, no English translation.",
+    "Nonchalant legend": "Keep responses brief and to the point, make it like the chatbot doesn't care about the user at all and give one word or one sentence responses. Language should be Hindi in Roman script, no English translation.",
 }
 
 style_names = list(styles.keys())
