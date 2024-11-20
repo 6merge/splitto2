@@ -59,6 +59,7 @@ def append_context(role, content):
     save_memory(memory)
 
 # Generate AI response
+# Generate AI response
 def generate_response(current_style, context_log, user_input):
     genai = configure_genai()
     if not genai:
@@ -75,12 +76,10 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # Corrected model name with `tunedModels/` prefix
-        model_name = "tunedModels/gemini-1.5-flash"  # Corrected model path
-
-        # Generate the response
+        # **Change model path here** to something standard
+        model_name = "models/gemini-1.5"  # Updated model path, check if this is available
         response = genai.generate_text(
-            model=model_name,  # Pass model name correctly
+            model=model_name,  # Use updated model format
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
