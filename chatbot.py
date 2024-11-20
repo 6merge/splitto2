@@ -62,30 +62,51 @@ def append_context(memory, role, content):
 # Generate AI response
 def generate_response(current_style, context_log, user_input):
     try:
-        # Prepare dynamic prompt
-        dynamic_prompt = (
-            f"System: {current_style}\n"
-            "The following is a conversation between a user and Splitto, "
-            "a chatbot that can communicate in different moods. "
-            "Splitto is created by Mayank Raj, who can be found on Instagram and GitHub as 6merge.\n\n"
-        )
-        for message in context_log:
-            dynamic_prompt += f"{message['role']}: {message['content']}\n"
-        dynamic_prompt += f"User: {user_input}\nAssistant:"
+        # Detailed logging of input parameters
+        print(f"Current Style: {current_style}")
+        print(f"Context Log Length: {len(context_log)}")
+        print(f"User Input: {user_input}")
 
         # Use Gemini Flash model
         model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(dynamic_prompt, 
-                                          generation_config=genai.types.GenerationConfig(
-                                              temperature=0.7,
-                                              max_output_tokens=100
-                                          ))
         
-        return response.text.strip()
+        # More explicit prompt construction
+        messages = [
+            {
+                'role': 'user',
+                'parts': [
+                    f"Style Instructions: {current_style}\n" +
+                    "You are Splitto, a mood-based Hindi chatbot created by Mayank Raj. " +
+                    "Respond in conversational Hindi using Roman script."
+                ]
+            },
+            {
+                'role': 'user',
+                'parts': [user_input]
+            }
+        ]
+
+        # Use chat method instead of generate_content
+        response = model.start_chat(history=[]).send_message(
+            messages,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.7,
+                max_output_tokens=100
+            )
+        )
+        
+        # More robust response handling
+        if response and response.text:
+            return response.text.strip()
+        else:
+            print("Empty response received")
+            return "Maaf karo, kuch response nahi aa raha"
     
     except Exception as e:
+        # More detailed error logging
+        print(f"Detailed Error: {e}")
         st.error(f"Error generating response: {e}")
-        return "(Kuch gadbad ho gayi, phir se try karo)"
+        return f"Error: {str(e)}"
 
 # Streamlit UI Configuration
 st.set_page_config(page_title="Splitto - Mood-based Hindi Chatbot", layout="centered")
