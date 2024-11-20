@@ -78,7 +78,7 @@ def generate_response(current_style, context_log, user_input):
     try:
         response = genai.generate_text(
            model="models/gemini-1.5-flash",
-,
+
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
