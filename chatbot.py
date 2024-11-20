@@ -3,11 +3,15 @@ import json
 from dotenv import load_dotenv
 import streamlit as st
 
-# Load environment variables
-load_dotenv()
+# Dynamically import the Google Generative AI module only when needed
+def configure_genai():
+    import google.generativeai as genai
+    genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+    return genai
+
 
 # Ensure API Key is available
-api_key = os.getenv("GENAI_API_KEY")
+
 if not api_key:
     st.error("GENAI_API_KEY not set. Please check your .env file.")
     st.stop()
