@@ -1,29 +1,15 @@
 import os
 import json
+import google.generativeai as genai
 from dotenv import load_dotenv
 import streamlit as st
 
 # Load environment variables
 load_dotenv()
 
-# Fetch API key
-api_key = os.getenv("GENAI_API_KEY")
-
-# Ensure API key is available
-if not api_key:
-    st.error("Generative AI API key is missing. Please set the GENAI_API_KEY environment variable.")
-    st.stop()
-
-# Lazy import and configure Generative AI
-def configure_genai():
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        return genai
-    except ImportError as e:
-        st.error(f"Error importing Generative AI library: {e}")
-        return None
-
+# Configure Generative AI
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+model_name = "gemini-1.5-flash"
 
 # Memory file path
 memory_file = "chat_memory.json"
@@ -34,7 +20,7 @@ styles = {
     "Khadoos": "Keep responses clear and professional, almost rude but never crossing the line. Language should be Hindi in Roman script, no English translation.",
     "Dost": "Keep responses warm and supportive. Language should be Hindi in Roman script, no English translation.",
     "Yaar": "Include subtle humor where appropriate. Language should be Hindi in Roman script, no English translation.",
-    "Nonchalant legend": "Keep responses brief and to the point, make it like the chatbot doesn't care about the user at all and give one word or one sentence responses. Language should be Hindi in Roman script, no English translation.",
+    "Nonchalant legend": "Keep responses brief and to the point, make it like the chatbot dont care about the user at all and give one word or one sentence responses. Language should be Hindi in Roman script, no English translation.",
 }
 
 style_names = list(styles.keys())
@@ -60,13 +46,7 @@ def append_context(role, content):
     save_memory(memory)
 
 # Generate AI response
-# Generate AI response
-# Generate AI response
 def generate_response(current_style, context_log, user_input):
-    genai = configure_genai()
-    if not genai:
-        return "(Generative AI module is not available)"
-
     dynamic_prompt = (
         f"System: {current_style}\n"
         "The following is a conversation between a user and Splitto, "
@@ -78,25 +58,13 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # Use the model name as a string
-        model_name = "projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash"
-
-        # API Call
-        response = genai.generate_text(
-            model=model_name,  # Pass model name directly as a string
-            prompt=dynamic_prompt,
-            temperature=0.7,
-            max_output_tokens=100,
-        )
-
-        # Handle response
-        if response and response.generations:
-            return response.generations[0].text.strip()
+        model = genai.GenerativeModel(model_name)
+        response = model.generate_content(dynamic_prompt)
+        if response and hasattr(response, "text"):
+            return response.text.strip()
         return "(No response received)"
     except Exception as e:
         return f"Error: {e}"
-
-
 
 # Load memory
 memory = load_memory()
@@ -195,4 +163,3 @@ st.markdown("</div>", unsafe_allow_html=True)
 # Footer
 st.markdown("---")
 st.markdown("🌟 Created by **Mayank Raj**. Connect on [GitHub](https://github.com/6merge) and [Instagram](https://www.instagram.com/6merge).")
-
