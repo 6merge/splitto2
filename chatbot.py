@@ -3,18 +3,21 @@ import json
 from dotenv import load_dotenv
 import streamlit as st
 
-# Dynamically import the Google Generative AI module only when needed
+# Load environment variables
+load_dotenv()
+
+# Lazy import for google.generativeai to avoid circular imports
 def configure_genai():
-    import google.generativeai as genai
-    genai.configure(api_key=os.getenv("GENAI_API_KEY"))
-    return genai
+    try:
+        import google.generativeai as genai
+        genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+        return genai
+    except ImportError as e:
+        st.error(f"Error importing Generative AI library: {e}")
+        return None
 
-
-# Ensure API Key is available
-
-if not api_key:
-    st.error("GENAI_API_KEY not set. Please check your .env file.")
-    st.stop()
+# Memory file path
+memory_file = "chat_memory.json"
 
 # Define moods/styles
 styles = {
@@ -27,16 +30,7 @@ styles = {
 
 style_names = list(styles.keys())
 
-# File path for chat memory
-memory_file = "chat_memory.json"
-
-# Function to configure and return the Generative AI client
-def configure_genai():
-    import google.generativeai as genai
-    genai.configure(api_key=api_key)
-    return genai
-
-# Load chat memory
+# Load memory
 def load_memory():
     if os.path.exists(memory_file):
         with open(memory_file, "r") as file:
@@ -46,7 +40,7 @@ def load_memory():
             return memory
     return {"context_log": []}
 
-# Save chat memory
+# Save memory
 def save_memory(memory):
     with open(memory_file, "w") as file:
         json.dump(memory, file, indent=4)
@@ -56,33 +50,36 @@ def append_context(role, content):
     memory["context_log"].append({"role": role, "content": content})
     save_memory(memory)
 
-# Generate AI response using Generative AI
+# Generate AI response
 def generate_response(current_style, context_log, user_input):
     genai = configure_genai()
+    if not genai:
+        return "(Generative AI module is not available)"
+
+    dynamic_prompt = (
+        f"System: {current_style}\n"
+        "The following is a conversation between a user and Splitto, "
+        "a chatbot that can communicate in different moods. "
+        "Splitto is created by Mayank Raj, who can be found on Instagram and GitHub as 6merge.\n\n"
+    )
+    for message in context_log:
+        dynamic_prompt += f"{message['role']}: {message['content']}\n"
+    dynamic_prompt += f"User: {user_input}\nAssistant:"
+
     try:
-        model_name = "gemini-1.5-flash"
-        dynamic_prompt = (
-            f"System: {current_style}\n"
-            "The following is a conversation between a user and Splitto, "
-            "a chatbot that can communicate in different moods. "
-            "Splitto is created by Mayank Raj, who can be found on Instagram and GitHub as 6merge.\n\n"
-        )
-        for message in context_log:
-            dynamic_prompt += f"{message['role']}: {message['content']}\n"
-        dynamic_prompt += f"User: {user_input}\nAssistant:"
-        
-        # Generate response
         response = genai.generate_text(
-            model=model_name,
+            model="gemini-1.5-flash",
             prompt=dynamic_prompt,
             temperature=0.7,
-            max_output_tokens=150,
+            max_output_tokens=100,
         )
-        return response.generations[0].text.strip() if response.generations else "(No response received)"
+        if response and response.generations:
+            return response.generations[0].text.strip()
+        return "(No response received)"
     except Exception as e:
         return f"Error: {e}"
 
-# Load memory at the start
+# Load memory
 memory = load_memory()
 
 # Streamlit UI
@@ -179,3 +176,4 @@ st.markdown("</div>", unsafe_allow_html=True)
 # Footer
 st.markdown("---")
 st.markdown("🌟 Created by **Mayank Raj**. Connect on [GitHub](https://github.com/6merge) and [Instagram](https://www.instagram.com/6merge).")
+
