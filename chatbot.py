@@ -1,14 +1,24 @@
 import os
 import json
-import google.generativeai as genai
-from dotenv import load_dotenv
 import streamlit as st
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
+# Import Generative AI only when required
+import google.generativeai as genai
+
 # Configure Generative AI
-genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+def configure_genai():
+    api_key = os.getenv("GENAI_API_KEY")
+    if api_key:
+        genai.configure(api_key=api_key)
+    else:
+        raise ValueError("GENAI_API_KEY not found in environment variables")
+
+configure_genai()  # Initialize the AI service
+
 model_name = "gemini-1.5-flash"
 
 # Memory file path
