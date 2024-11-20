@@ -61,6 +61,7 @@ def append_context(role, content):
 
 # Generate AI response
 # Generate AI response
+# Generate AI response
 def generate_response(current_style, context_log, user_input):
     genai = configure_genai()
     if not genai:
@@ -77,12 +78,12 @@ def generate_response(current_style, context_log, user_input):
     dynamic_prompt += f"User: {user_input}\nAssistant:"
 
     try:
-        # Ensure correct model path if required by the API
-        model_path="projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash", # Replace placeholders if needed
+        # Specify the model as a TunedModel
+        model = genai.TunedModel(name="projects/658259484703/locations/asia-south1/models/tunedModels/gemini-1.5-flash")
 
         # API Call
         response = genai.generate_text(
-            model=model_path,
+            model=model,
             prompt=dynamic_prompt,
             temperature=0.7,
             max_output_tokens=100,
