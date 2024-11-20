@@ -6,15 +6,24 @@ import streamlit as st
 # Load environment variables
 load_dotenv()
 
-# Lazy import for google.generativeai to avoid circular imports
+# Fetch API key
+api_key = os.getenv("GENAI_API_KEY")
+
+# Ensure API key is available
+if not api_key:
+    st.error("Generative AI API key is missing. Please set the GENAI_API_KEY environment variable.")
+    st.stop()
+
+# Lazy import and configure Generative AI
 def configure_genai():
     try:
         import google.generativeai as genai
-        genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+        genai.configure(api_key=api_key)
         return genai
     except ImportError as e:
         st.error(f"Error importing Generative AI library: {e}")
         return None
+
 
 # Memory file path
 memory_file = "chat_memory.json"
