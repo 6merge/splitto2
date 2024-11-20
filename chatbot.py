@@ -6,21 +6,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import Generative AI only when required
-import google.generativeai as genai
-
-# Configure Generative AI
-def configure_genai():
-    api_key = os.getenv("GENAI_API_KEY")
-    if api_key:
-        genai.configure(api_key=api_key)
-    else:
-        raise ValueError("GENAI_API_KEY not found in environment variables")
-
-configure_genai()  # Initialize the AI service
-
-model_name = "gemini-1.5-flash"
-
 # Memory file path
 memory_file = "chat_memory.json"
 
@@ -57,19 +42,31 @@ def append_context(role, content):
 
 # Generate AI response
 def generate_response(current_style, context_log, user_input):
-    dynamic_prompt = (
-        f"System: {current_style}\n"
-        "The following is a conversation between a user and Splitto, "
-        "a chatbot that can communicate in different moods. "
-        "Splitto is created by Mayank Raj, who can be found on Instagram and GitHub as 6merge.\n\n"
-    )
-    for message in context_log:
-        dynamic_prompt += f"{message['role']}: {message['content']}\n"
-    dynamic_prompt += f"User: {user_input}\nAssistant:"
-
     try:
+        # Import google.generativeai only inside the function
+        import google.generativeai as genai
+        
+        # Configure Generative AI
+        api_key = os.getenv("GENAI_API_KEY")
+        if not api_key:
+            raise ValueError("GENAI_API_KEY not found in environment variables")
+        
+        genai.configure(api_key=api_key)
+        model_name = "gemini-1.5-flash"
+        
+        dynamic_prompt = (
+            f"System: {current_style}\n"
+            "The following is a conversation between a user and Splitto, "
+            "a chatbot that can communicate in different moods. "
+            "Splitto is created by Mayank Raj, who can be found on Instagram and GitHub as 6merge.\n\n"
+        )
+        for message in context_log:
+            dynamic_prompt += f"{message['role']}: {message['content']}\n"
+        dynamic_prompt += f"User: {user_input}\nAssistant:"
+        
         model = genai.GenerativeModel(model_name)
         response = model.generate_content(dynamic_prompt)
+        
         if response and hasattr(response, "text"):
             return response.text.strip()
         return "(No response received)"
